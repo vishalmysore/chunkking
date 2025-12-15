@@ -276,25 +276,34 @@ public class ChunkKingDemo {
                 // Index 1: Traditional chunking with RAGService
                 System.out.println("Indexing with traditional chunking...");
                 try (RAGService tradRAG = new RAGService(Paths.get(tradIndexPath), embeddings)) {
-                    tradRAG.addDocumentWithChunking("berlin", BERLIN_ARTICLE, traditionalChunking);
+                    List<String> tradChunks = traditionalChunking.chunk(BERLIN_ARTICLE);
+                    System.out.println("Traditional chunks created: " + tradChunks.size());
+                    for (int i = 0; i < tradChunks.size(); i++) {
+                        tradRAG.addDocument("berlin-trad-" + i, tradChunks.get(i));
+                    }
                     System.out.println("Traditional chunking complete!");
                 }
                 
                 System.out.println("\n╔═══════════════════════════════════════════════════════════════╗");
-                System.out.println("║  STRATEGY 2: Contextual Chunking (ContextualChunking class!)  ║");
-                System.out.println("║  (Adds document context to each chunk using LLM)              ║");
+                System.out.println("║  STRATEGY 2: Contextual Chunking (Manual Context Addition)    ║");
+                System.out.println("║  (Adds document context prefix to each chunk)                 ║");
                 System.out.println("╚═══════════════════════════════════════════════════════════════╝\n");
                 
-                // Strategy 2: Contextual Chunking (adds context to each chunk)
-                System.out.println("Creating ContextualChunking with SimpleContextGenerator...");
+                // Strategy 2: Manual contextual chunking
+                System.out.println("Creating contextual chunks manually...");
                 SlidingWindowChunking baseStrategy = new SlidingWindowChunking(50, 10);
-                ContextGenerator contextGen = new SimpleContextGenerator();
-                ContextualChunking contextualChunking = new ContextualChunking(baseStrategy, contextGen);
+                List<String> baseChunks = baseStrategy.chunk(BERLIN_ARTICLE);
                 
-                System.out.println("Indexing with contextual chunking...");
+                // Generate simple context manually
+                String context = "This document is about Berlin, the capital and largest city of Germany.";
+                
+                System.out.println("Adding context to each chunk...");
                 try (RAGService contextRAG = new RAGService(Paths.get(contextualIndexPath), embeddings)) {
-                    contextRAG.addDocumentWithChunking("berlin", BERLIN_ARTICLE, contextualChunking);
-                    System.out.println("Contextual chunking complete!");
+                    for (int i = 0; i < baseChunks.size(); i++) {
+                        String enhancedChunk = "[CONTEXT: " + context + "] " + baseChunks.get(i);
+                        contextRAG.addDocument("berlin-context-" + i, enhancedChunk);
+                    }
+                    System.out.println("Contextual chunks indexed: " + baseChunks.size());
                 }
                 
                 System.out.println("\n╔═══════════════════════════════════════════════════════════════╗");
@@ -323,7 +332,7 @@ public class ChunkKingDemo {
                         System.out.printf("  %d. Score: %.4f | %s%n", 
                             i + 1,
                             tradResults.get(i).getScore(), 
-                            truncate(tradResults.get(i).getContent(), 60));
+                            truncate(tradResults.get(i).getContent(), 80));
                     }
                     
                     // Search contextual
@@ -334,11 +343,28 @@ public class ChunkKingDemo {
                     
                     System.out.println("\nCONTEXTUAL CHUNKING RESULTS:");
                     for (int i = 0; i < contextResults.size(); i++) {
+                        String content = contextResults.get(i).getContent();
+                        // Remove the context prefix for display, but it was used during embedding
+                        if (content.startsWith("[CONTEXT:")) {
+                            int endContext = content.indexOf("] ");
+                            if (endContext > 0) {
+                                content = content.substring(endContext + 2);
+                            }
+                        }
                         System.out.printf("  %d. Score: %.4f | %s%n", 
                             i + 1,
                             contextResults.get(i).getScore(), 
-                            truncate(contextResults.get(i).getContent(), 60));
+                            truncate(content, 80));
                     }
+                    
+                    // Compare top results
+                    double tradScore = tradResults.isEmpty() ? 0.0 : tradResults.get(0).getScore();
+                    double contextScore = contextResults.isEmpty() ? 0.0 : contextResults.get(0).getScore();
+                    double improvement = ((contextScore - tradScore) / tradScore) * 100;
+                    
+                    System.out.printf("\n📊 Top Result Comparison: %.2f%% %s\n", 
+                        Math.abs(improvement),
+                        improvement > 0 ? "IMPROVEMENT ✅" : (improvement < -5 ? "WORSE ⚠️" : "SIMILAR"));
                     System.out.println();
                 }
                 
@@ -358,17 +384,16 @@ public class ChunkKingDemo {
             System.out.println("   → Anaphoric references (\"Its\", \"The city\") lose meaning\n");
             
             System.out.println("2. Contextual Chunking:");
-            System.out.println("   → Uses LLM to generate document-level context");
-            System.out.println("   → Adds context to each chunk before embedding");
+            System.out.println("   → Adds document-level context to each chunk");
+            System.out.println("   → Context is included during embedding process");
             System.out.println("   → Each chunk understands what pronouns refer to");
             System.out.println("   → Anaphoric references maintain connection to \"Berlin\"\n");
             
-            System.out.println("3. This demonstrates the REAL agenticmemory implementation!");
-            System.out.println("   → Using RAGService for vector search");
-            System.out.println("   → Using SlidingWindowChunking vs ContextualChunking");
-            System.out.println("   → Using SimpleContextGenerator for context creation");
-            System.out.println("   → Real Lucene-based retrieval with OpenAI embeddings");
-            System.out.println("   → NO MOCKS! 100% agenticmemory library!\n");
+            System.out.println("3. How it works:");
+            System.out.println("   → Context: \"This document is about Berlin...\"");
+            System.out.println("   → Chunk: \"Its more than 3.85 million inhabitants...\"");
+            System.out.println("   → Embedded: \"[CONTEXT: Berlin...] Its more than 3.85...\"");
+            System.out.println("   → Result: \"Its\" is now semantically linked to \"Berlin\"!\n");
             
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());

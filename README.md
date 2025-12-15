@@ -1,6 +1,12 @@
 # ChunkKing - Context-Sensitive Chunking Demo
 
-A demonstration project showing the difference between traditional chunking and context-sensitive Late Chunking using the Agentic Memory RAG library.
+A demonstration project in 100% Java showing the difference between traditional chunking and context-sensitive Late Chunking using the [Agentic Memory RAG ](https://github.com/vishalmysore/agenticmemory) library.
+
+Inspiration   
+ https://arxiv.org/pdf/2504.19754   
+ https://arxiv.org/abs/2409.04701  
+ https://github.com/jina-ai/late-chunking   
+
 
 ## The Context Problem
 
@@ -62,16 +68,6 @@ mvn clean compile
 mvn exec:java -Dexec.mainClass="io.github.vishalmysore.chunkking.ChunkKingDemo"
 ```
 
-## Project Structure
-
-```
-chunkking/
-├── pom.xml                           # Maven configuration
-├── README.md                         # This file
-└── src/main/java/
-    └── io/github/vishalmysore/chunkking/
-        └── ChunkKingDemo.java        # Main demonstration
-```
 
 ## Dependencies
 
@@ -100,12 +96,4 @@ Traditional chunking may suffice when:
 - ⚪ Chunks are naturally independent
 - ⚪ Memory/compute constraints exist
 
-## Learn More
 
-See the main Agentic Memory library documentation:
-- [Late Chunking Guide](../lucenerag/LATE_CHUNKING.md)
-- [Chunking Strategies](../lucenerag/CHUNKING_STRATEGIES.md)
-
-## License
-
-Same as the Agentic Memory library.
