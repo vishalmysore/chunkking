@@ -62,11 +62,31 @@ Comparing similarity between "Berlin" and various sentences:
 
 ## Running the Demo
 
+### ChunkKingDemo - Contextual Chunking Focus
 ```bash
 cd chunkking
 mvn clean compile
-mvn exec:java -Dexec.mainClass="io.github.vishalmysore.chunkking.ChunkKingDemo"
+mvn exec:java -Dexec.mainClass="io.github.vishalmysore.chunkking.ChunkKingDemo" -Dexec.args="sk-proj-YOUR-KEY"
 ```
+
+### AllChunkingStrategiesComparison - Comprehensive Benchmark
+Compare **ALL 9 chunking strategies** from agenticmemory library:
+```bash
+mvn exec:java -Dexec.mainClass="io.github.vishalmysore.chunkking.AllChunkingStrategiesComparison" -Dexec.args="sk-proj-YOUR-KEY"
+```
+
+**Strategies compared:**
+1. SlidingWindowChunking (baseline)
+2. ContextualChunking (LLM-enhanced)
+3. AdaptiveChunking (boundary-aware)
+4. EntityBasedChunking (named entities)
+5. TopicBasedChunking (semantic grouping)
+6. RegexChunking (custom patterns)
+7. HybridChunking (combined strategies)
+8. ZettelkastenChunking (knowledge management)
+9. TaskAwareChunking (task-optimized)
+
+See [ALL_STRATEGIES_COMPARISON.md](ALL_STRATEGIES_COMPARISON.md) for detailed documentation.
 
 
 ## Dependencies
@@ -95,5 +115,61 @@ Traditional chunking may suffice when:
 - ⚪ Documents are simple and self-contained
 - ⚪ Chunks are naturally independent
 - ⚪ Memory/compute constraints exist
+
+## Demo Programs
+
+This project includes three demonstration programs:
+
+### 1. ChunkKingDemo.java
+**Focus:** Contextual Chunking deep dive
+
+Demonstrates:
+- The context problem with anaphoric references
+- How Contextual Chunking works (adding document context to chunks)
+- Real embedding comparison (with/without context)
+- Numerical results showing 2-18% improvements
+
+**Run:** `mvn exec:java -Dexec.mainClass="io.github.vishalmysore.chunkking.ChunkKingDemo" -Dexec.args="YOUR-API-KEY"`
+
+### 2. ChunkingComparisonDemo.java
+**Focus:** Side-by-side comparison of two strategies
+
+Compares:
+- SlidingWindowChunking (traditional)
+- ContextualChunking (context-aware)
+
+Uses real RAGService indexing and search with test queries.
+
+**Run:** `mvn exec:java -Dexec.mainClass="io.github.vishalmysore.chunkking.ChunkingComparisonDemo" -Dexec.args="YOUR-API-KEY"`
+
+### 3. AllChunkingStrategiesComparison.java ⭐ NEW!
+**Focus:** Comprehensive benchmark of ALL strategies
+
+Tests 9 different chunking strategies:
+1. SlidingWindowChunking
+2. ContextualChunking
+3. AdaptiveChunking
+4. EntityBasedChunking
+5. TopicBasedChunking
+6. RegexChunking
+7. HybridChunking
+8. ZettelkastenChunking
+9. TaskAwareChunking
+
+Provides:
+- Performance metrics (chunk count, size, speed)
+- Query performance comparison (5 test queries)
+- Best strategy recommendations
+- Comprehensive comparison summary
+
+**Run:** `mvn exec:java -Dexec.mainClass="io.github.vishalmysore.chunkking.AllChunkingStrategiesComparison" -Dexec.args="YOUR-API-KEY"`
+
+**Docs:** See [ALL_STRATEGIES_COMPARISON.md](ALL_STRATEGIES_COMPARISON.md) for detailed documentation.
+
+## Which Demo Should I Run?
+
+- **Learning about context problems?** → Start with `ChunkKingDemo.java`
+- **Quick comparison of basic vs. context-aware?** → Run `ChunkingComparisonDemo.java`
+- **Need to choose a strategy for production?** → Run `AllChunkingStrategiesComparison.java`
 
 
