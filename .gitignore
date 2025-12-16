@@ -1,0 +1,74 @@
+# Maven build artifacts
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE - IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# IDE - Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# IDE - VSCode
+.vscode/
+*.code-workspace
+
+# OS Files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Temporary indices created during testing
+index-*/
+*-index/
+temp-*-index/
+sliding-window-index/
+adaptive-index/
+entity-based-index/
+topic-based-index/
+hybrid-index/
+task-*-index/
+html-tag-index/
+code-specific-index/
+regex-logs-index/
+
+# Log files
+*.log
+
+# Package files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Compiled class files
+*.class
+
+# API keys and secrets
+*.env
+.env.local
+api-keys.txt
+secrets.txt
+
+# Test output
+test-output/
+article.md 
